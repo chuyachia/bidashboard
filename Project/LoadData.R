@@ -48,11 +48,6 @@ y2yGrowth <- function(df,prevyear,thisyear){
   return (rtn)
 }
 
-monthlyAvgSales <- function(df) {
-  df <- df %>% group_by(Year,Month)%>%
-    summarise(Avg_Sales = mean(Weekly_Sales))
-  return (df)
-}
 
 storeAvg <- function(mydb){
   rtn <- dbGetQuery(mydb,
@@ -64,20 +59,42 @@ storeAvg <- function(mydb){
   return (rtn)
 }
 
-departByStore <- function(mydb) {
+departByStore <- function(mydb,storenum) {
   rtn <-   dbGetQuery(mydb,
-                      'SELECT DISTINCT Store, Dept
-                      FROM train')
+                      paste('SELECT DISTINCT Dept
+                      FROM train
+                      WHERE Store==',storenum))
   return (rtn)
 }
 
-getStoreInfo <- function(mydb,storenum) {
+storeInfo <- function(mydb,storenum) {
   rtn <- dbGetQuery(mydb,
-             paste0('SELECT *
+             paste('SELECT *
                     FROM stores
                     WHERE Store==',storenum))
   return (rtn)
 }
+storeSalesByDept <- function(mydb,storenum) {
+  rtn <- dbGetQuery(mydb,
+                    paste('SELECT Dept, sum(Weekly_Sales) AS Total_Sales
+                           FROM train
+                           WHERE Store==',storenum,
+                           ' GROUP BY Dept'
+                           ))
+  return (rtn)
+}
+
+deptAvg <- function(mydb,storenum){
+  rtn <- dbGetQuery(mydb,
+                    paste('SELEC avg(Weekly_Sales) AS Avg_Sales 
+                    FROM train
+                    GROUP BY Dept
+                    WHERE Store==',storenum,
+                    'ORDER BY Avg_Sales DESC')
+                    )
+  return (rtn)
+}
+
 other <- function(mydb) {
 ## Number of departments by store
 dbGetQuery(mydb,

@@ -5,8 +5,8 @@ ui = dashboardPage(
   dashboardHeader(),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Key performance indicator", tabName = "overview", icon = icon("dashboard")),
-      menuItem("Insight by store", tabName = "storeinsight", icon = icon("th")),
+      menuItem("Key performance indicators", tabName = "overview", icon = icon("dashboard")),
+      menuItem("Store insights", tabName = "storeinsights", icon = icon("th")),
       menuItem("Analytics", tabName = "analytics", icon = icon("line-chart"))
     )
   ),
@@ -24,19 +24,25 @@ ui = dashboardPage(
                 box(title = "Average weekly sales by month", status = "primary",
                     highchartOutput("weeklysalesplot"))
               )),
-      tabItem(tabName="storeinsight",
+      tabItem(tabName="storeinsights",
               fluidRow(
-                column(3, wellPanel(
-                  selectInput("choosestore",
-                            "Choose A Store",
-                            paste('Store',seq(1:45))),
-                  actionLink("selectall","Select/Unselect All Departments"), 
-                  uiOutput("ui"))
+                box(width=3,
+                    htmlOutput("desc"),
+                    selectInput("choosestore",
+                              "Choose A Store",
+                              (function(){ls = as.character(seq(1:45)) 
+                              names(ls) =paste('Store',seq(1:45)) 
+                              return(ls)})()),
+                    actionLink("selectall","Select/Unselect All Departments"), 
+                    uiOutput("ui"),
+                    actionButton("update", "Update View")
                   ),
-                column(9,wellPanel(
-                  htmlOutput("desc")
+                box(width=9,title = "Sales break down by department",
+                    highchartOutput("salesdept")
                 ),
-                box())
+                box(width=9,title="Average weekly sales trend by department",
+                    highchartOutput("trenddept")    
+                )
                 )
     )
   )
