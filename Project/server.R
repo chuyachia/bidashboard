@@ -69,7 +69,7 @@ server <- function(input, output,session) {
   ### Store insights
   
   output$ui <- renderUI({
-    departlist <- departByStore(mydb,input$choosestore)$Dept
+    departlist <<- departByStore(mydb,input$choosestore)$Dept
     if (is.null(input$choosestore))
       return()
     
@@ -80,7 +80,9 @@ server <- function(input, output,session) {
                       multiple=TRUE)
   })
   
-  
+  chosenstore <- eventReactive(input$update, {
+    return(input$choosestore)
+  }, ignoreNULL = FALSE)
   
   checkAllOrNone <- function(session){
     if(input$selectall == 0) { return(NULL) }
@@ -96,19 +98,19 @@ server <- function(input, output,session) {
   observeEvent(input$selectall,checkAllOrNone(session))
   
   output$desc <- renderText({
-    if (is.null(input$choosestore))
+    if (is.null(chosenstore()))
       return()
-    tb <- storeInfo(mydb,input$choosestore)
+    tb <- storeInfo(mydb,chosenstore())
     str1 <- paste("Type : ", tb$Type)
     str2 <- paste("Size :",tb$Size)
-    HTML(paste('<span style="font-size:150%">',icon("id-card"),"Store ",input$choosestore,'</span>',
-               '<br/>',str1,'<br/>',str2))
+    HTML(paste('<span style="font-size:150%">',icon("id-card"),"Store ",chosenstore(),'</span>',
+               '<span style="float:right">',str1,' ',str2,'</span>'))
   })
   
   output$salesdept <- renderHighchart({
-    plotdata <- storeSalesByDept(mydb,input$choosestore)
+    plotdata <- storeSalesByDept(mydb,chosenstore())
     plotdata$Total_Sales[plotdata$Total_Sales<0] <-0
-    plotdata <- plotdata%>% filter(Dept%in%input$selectdepartments)
+    plotdata <- plotdata%>% filter(Dept%in%isolate(input$selectdepartments))
     alldepartsales <- sum(plotdata$Total_Sales)
     if (nrow(plotdata)==0){
       hc <- highchart()
@@ -131,7 +133,7 @@ server <- function(input, output,session) {
   })
   
   output$trenddept <- renderHighchart({
-    plotdata <- df %>% filter(Store==input$choosestore)
+    plotdata <- df %>% filter(Store==chosenstore())
     
     plotdata <- plotdata %>% group_by(Dept,Year, Month)%>%
       summarise(Avg_Sales = mean(Weekly_Sales))	%>%
@@ -141,7 +143,7 @@ server <- function(input, output,session) {
     hc <- highchart() %>% 
       hc_xAxis(categories = plotdata$Date)
     
-    for(i in input$selectdepartments){
+    for(i in isolate(input$selectdepartments)){
       hc <- hc_add_series(hc,data = round(plotdata[,i],2), name=paste("Dept ",i),showInLegend =FALSE)
     }
     hc

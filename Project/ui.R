@@ -26,8 +26,8 @@ ui = dashboardPage(
               )),
       tabItem(tabName="storeinsights",
               fluidRow(
+                box(width=12,htmlOutput("desc")),
                 box(width=3,
-                    htmlOutput("desc"),
                     selectInput("choosestore",
                               "Choose A Store",
                               (function(){ls = as.character(seq(1:45)) 
@@ -40,7 +40,7 @@ ui = dashboardPage(
                 box(width=9,title = "Sales break down by department",
                     highchartOutput("salesdept")
                 ),
-                box(width=9,title="Average weekly sales trend by department",
+                box(width=12,title="Average weekly sales trend by department",
                     highchartOutput("trenddept")    
                 )
                 )
