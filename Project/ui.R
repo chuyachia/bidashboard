@@ -2,7 +2,7 @@ library(shinydashboard)
 library(highcharter)
 
 ui = dashboardPage(
-  dashboardHeader(),
+  dashboardHeader(title="Retail BI dashboard"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Key performance indicators", tabName = "overview", icon = icon("dashboard")),
@@ -29,15 +29,15 @@ ui = dashboardPage(
                 box(width=12,htmlOutput("desc")),
                 box(width=3,
                     selectInput("choosestore",
-                              "Choose A Store",
+                              "Choose a store",
                               (function(){ls = as.character(seq(1:45)) 
                               names(ls) =paste('Store',seq(1:45)) 
                               return(ls)})()),
-                    actionLink("selectall","Select/Unselect All Departments"), 
+                    actionLink("selectall","Select/Unselect all departments"), 
                     uiOutput("ui"),
-                    actionButton("update", "Update View")
+                    actionButton("update", "Update view")
                   ),
-                box(width=9,title = "Sales break down by department",
+                box(width=9,title = "Sales breakdown by department",
                     highchartOutput("salesdept")
                 ),
                 box(width=12,title="Average weekly sales trend by department",

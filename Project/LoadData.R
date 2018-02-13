@@ -19,9 +19,15 @@ connectToDB <- function(){
 }
 
 avgWeeklySales <- function(mydb){
+  #rtn <-dbGetQuery(mydb,
+  #                 'SELECT round(avg(Weekly_Sales),2) Avg_Sales
+  #                 FROM train')
   rtn <-dbGetQuery(mydb,
                    'SELECT round(avg(Weekly_Sales),2) Avg_Sales
-                   FROM train')
+                    FROM 
+                    (SELECT Store, Date, sum(Weekly_Sales) Weekly_Sales
+                   FROM train
+                   GROUP BY Store, Date)')
   return (rtn)
 }
 
@@ -42,8 +48,10 @@ separateDate <- function(mydb,table){
 y2yGrowth <- function(df,prevyear,thisyear){
   #only accounting for months for which data is available for all 3 years
   df <- df %>%filter(!Month %in% c("01","11","12"))%>% 
-    group_by(Year)%>% 
-    summarise(Avg_Sales = mean(Weekly_Sales))
+    group_by(Year,Store)%>% 
+    summarise(Weekly_Sales = sum(Weekly_Sales))%>%
+    group_by(Year)%>%
+    summarise(Avg_Sales= mean(Weekly_Sales))
   rtn <- round((df$Avg_Sales[df$Year==thisyear]-df$Avg_Sales[df$Year==prevyear])/df$Avg_Sales[df$Year==prevyear],4)*100
   return (rtn)
 }
@@ -51,10 +59,13 @@ y2yGrowth <- function(df,prevyear,thisyear){
 
 storeAvg <- function(mydb){
   rtn <- dbGetQuery(mydb,
-             'SELECT train.Store AS Store, Type,avg(Weekly_Sales) AS Avg_Sales 
-             FROM train JOIN stores
+             'SELECT A.Store AS Store, Type,avg(Weekly_Sales) AS Avg_Sales 
+             FROM (SELECT Store, Date, sum(Weekly_Sales) AS Weekly_Sales
+                    FROM train
+                    GROUP BY Store, Date) AS A
+            JOIN stores
              USING (Store)
-             GROUP BY train.Store 
+             GROUP BY A.Store 
              ORDER BY Avg_Sales DESC')
   return (rtn)
 }
