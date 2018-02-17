@@ -65,12 +65,8 @@ output$salesdept <- renderHighchart({
 })
 
 output$trenddept <- renderHighchart({
-  plotdata <- df %>% filter(Store==chosenstore())
-  
-  plotdata <- plotdata %>% group_by(Dept,Year, Month)%>%
-    summarise(Avg_Sales = mean(Weekly_Sales))	%>%
-    unite(Date,Year,Month,sep = "-", remove = TRUE)%>% 
-    spread(Dept, Avg_Sales)
+  plotdata <- deptSales(mydb,chosenstore())
+  plotdata <- plotdata%>%spread(Dept,Weekly_Sales)
   plotdata <- as.data.frame(plotdata)
   hc <- highchart() %>% 
     hc_xAxis(categories = plotdata$Date)
