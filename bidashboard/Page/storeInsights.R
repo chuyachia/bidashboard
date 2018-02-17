@@ -56,7 +56,7 @@ output$salesdept <- renderHighchart({
       hc_tooltip(formatter = JS("function(){
                                 var pct =parseFloat((this.point.value/this.point.series.tree.val)*100).toFixed(2);
                                 return ('<b>Department '+this.point.name+'</b><br>'+
-                                'Department Sales:' + this.point.value+'$<br>'+
+                                'Department sales:' + this.point.value+'$<br>'+
                                 'Percentage in storewide sales: '+pct+'%')
                                 }"))
     hc

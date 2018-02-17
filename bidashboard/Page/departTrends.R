@@ -6,7 +6,8 @@ month_avg_sales <- df%>% separate(Date,c("Year","Month","Day"),"-")%>%
   group_by(Dept, Year,Month)%>%
   summarise(Monthly_Sales=sum(Weekly_Sales))%>%
   unite(Date,c(Year,Month),sep="-")%>%
-  filter(n()>12)
+  filter(n()>12)%>%
+  ungroup()
 
 output$ui2 <- renderUI({
   if (is.null(month_avg_sales))
@@ -27,14 +28,10 @@ output$decompo <- renderPlot({
   sales.ts = ts(filtered[,3], frequency=12, start=c(startdate[1],startdate[2]), end=c(enddate[1],enddate[2]))
   decomposed <- stl(sales.ts[,1], s.window="periodic")
   filtered$Date <- as.Date(paste0(filtered$Date,'-01'))
-  
-  plotdata <- as.data.frame(cbind(Time=filtered$Date,
-                                  Observed=filtered$Monthly_Sales,
-                                  Seasonal=decomposed$time.series[,1],
-                                  Trend=decomposed$time.series[,2],
-                                  Random=decomposed$time.series[,3]))
-  
-  plotdata$Time <- as.Date(plotdata$Time)
+  plotdata<- filtered %>%select(Time=Date,Observed=Monthly_Sales,-Dept)%>%
+    mutate(Seasonal= decomposed$time.series[,1],
+                     Trend=decomposed$time.series[,2],
+                     Random=decomposed$time.series[,3])
   plotdata <- gather(plotdata, component, value, -Time)
   plotdata$component<- factor(plotdata$component,levels=c("Observed","Trend","Seasonal","Random"))
   
@@ -44,7 +41,7 @@ output$decompo <- renderPlot({
     theme_bw() +
     scale_x_date(labels = date_format("%Y-%m"),date_breaks="1 month")+
     labs(y="Average weekly sales", x="Month") +
-    ggtitle("Average weekly sales time series decomposition") +
+    #ggtitle("Average weekly sales time series decomposition") +
     theme(plot.title=element_text(hjust=0.5),
           axis.text.x = element_text(angle = 90))
 })

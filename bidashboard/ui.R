@@ -43,10 +43,10 @@ ui = dashboardPage(
       tabItem(tabName="storeinsights",
               fluidRow(
                 column(12,
-                box(width=12,htmlOutput("desc"))
+                box(width=12,htmlOutput("desc"),status = "primary")
                 ),
                 column(12,
-                box(width=3,
+                box(width=3,status = "primary",
                     selectInput("choosestore",
                               "Choose a store",
                               (function(){ls = as.character(seq(1:45)) 
@@ -55,19 +55,22 @@ ui = dashboardPage(
                     actionLink("selectall","Select/Unselect all departments"), 
                     uiOutput("ui"),
                     actionButton("update", "Update view")),
-                box(width=9,title = "Sales breakdown by department",
+                box(width=9,title = "Sales breakdown by department",status = "primary",
                     highchartOutput("salesdept"))
                 ),
                 column(12,
-                box(width=12,title="Average weekly sales trend by department",
+                box(width=12,title="Weekly sales trends by department",status = "primary",
                     highchartOutput("trenddept"))
                 )
                 )
               ),
       tabItem(tabName="departtrends",
               fluidRow(
-                column(12,box(width=12,uiOutput("ui2"),plotOutput("decompo"))),
+                column(12,box(width=12,title="Average weekly sales time series decomposition",
+                              status="primary",
+                              uiOutput("ui2"),plotOutput("decompo"))),
                 column(12,box(width=12,title="Department sales correlations",
+                              status="primary",
                     highchartOutput("cor")))
               ))
   )

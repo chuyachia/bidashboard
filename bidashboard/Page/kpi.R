@@ -7,7 +7,7 @@ df$Holidy[df$Date%in%c("2010-12-31","2011-12-30","2012-12-28")] <- "Christmas"
 
 output$avgweeklysales <- renderValueBox({
   val <- avgWeeklySales(mydb)
-  valueBox(paste0("$",format(val,digits=9,decimal.mark=".",big.mark=",")), "average storewide sales per week", icon = icon("list"),
+  valueBox(paste0("$",format(val,digits=9,decimal.mark=".",big.mark=",")), "storewide average weekly sales", icon = icon("list"),
            color = "blue"
   )
 }) 
