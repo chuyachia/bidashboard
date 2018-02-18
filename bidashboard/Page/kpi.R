@@ -5,6 +5,13 @@ df$Holidy[df$Date%in%c("2010-09-10","2011-09-09","2012-09-07")] <- "LaborDay"
 df$Holidy[df$Date%in%c("2010-11-26","2011-11-25","2012-11-23")] <- "Thanksgiving"
 df$Holidy[df$Date%in%c("2010-12-31","2011-12-30","2012-12-28")] <- "Christmas"
 
+observeEvent(input$show, {
+  showModal(modalDialog(
+    title = "Important message",
+    "This is an important message!"
+  ))
+})
+
 output$avgweeklysales <- renderValueBox({
   val <- avgWeeklySales(mydb)
   valueBox(paste0("$",format(val,digits=9,decimal.mark=".",big.mark=",")), "storewide average weekly sales", icon = icon("list"),

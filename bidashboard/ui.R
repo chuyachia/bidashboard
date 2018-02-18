@@ -1,8 +1,21 @@
 library(shinydashboard)
+library(shinycssloaders)
 library(highcharter)
+library(ggiraph)
 
 ui = dashboardPage(
-  dashboardHeader(title="Retail BI dashboard"),
+  dashboardHeader(title="Retail BI dashboard",
+                  tags$li(a(href='#',
+                            icon('question-circle'),
+                            id='show',
+                            title = "About",
+                            class="action-button shiny-bound-input"),
+                          class="dropdown"),
+                  tags$li(a(href = 'https://github.com/chuyachia/bidashboard',
+                            target="_blank",
+                            icon("code"),
+                            title = "Source code"),
+                          class = "dropdown")),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Key performance indicators", tabName = "overview", icon = icon("dashboard")),
@@ -23,21 +36,27 @@ ui = dashboardPage(
                  tabBox(width=6,
                         id = "tabset1", 
                         title="Store sales ranking",
-                        tabPanel("Top performing stores", highchartOutput("topperform")),
-                        tabPanel("Least performing stores", highchartOutput("leastperform"))
+                        tabPanel("Top performing stores", 
+                                 highchartOutput("topperform")%>% withSpinner()),
+                        tabPanel("Least performing stores", 
+                                 highchartOutput("leastperform")%>% withSpinner())
                  ),
                  tabBox(width=6,
                         id = "tabset2",
                         title = "Holiday best sellers", 
-                        tabPanel("Super Bowl", highchartOutput("sbsales")),
-                        tabPanel("Labor Day", highchartOutput("ldsales")),
-                        tabPanel("Thanksgiving", highchartOutput("tgsales")),
-                        tabPanel("Christmas", highchartOutput("xmsales"))
+                        tabPanel("Super Bowl", 
+                                 highchartOutput("sbsales")%>% withSpinner()),
+                        tabPanel("Labor Day", 
+                                 highchartOutput("ldsales")%>% withSpinner()),
+                        tabPanel("Thanksgiving", 
+                                 highchartOutput("tgsales")%>% withSpinner()),
+                        tabPanel("Christmas", 
+                                 highchartOutput("xmsales")%>% withSpinner())
                  )
                 ),
                 column(12,
                  box(width=12,title = "Average weekly sales by month", status = "primary",
-                     highchartOutput("weeklysalesplot"))
+                     highchartOutput("weeklysalesplot")%>% withSpinner())
                  )
               )),
       tabItem(tabName="storeinsights",
@@ -56,11 +75,11 @@ ui = dashboardPage(
                     uiOutput("ui"),
                     actionButton("update", "Update view")),
                 box(width=9,title = "Sales breakdown by department",status = "primary",
-                    highchartOutput("salesdept"))
+                    highchartOutput("salesdept")%>% withSpinner())
                 ),
                 column(12,
                 box(width=12,title="Weekly sales trends by department",status = "primary",
-                    highchartOutput("trenddept"))
+                    highchartOutput("trenddept")%>% withSpinner())
                 )
                 )
               ),
@@ -68,10 +87,11 @@ ui = dashboardPage(
               fluidRow(
                 column(12,box(width=12,title="Average weekly sales time series decomposition",
                               status="primary",
-                              uiOutput("ui2"),plotOutput("decompo"))),
+                              uiOutput("ui2"),
+                              ggiraphOutput("decompo")%>% withSpinner())),
                 column(12,box(width=12,title="Department sales correlations",
                               status="primary",
-                    highchartOutput("cor")))
+                    highchartOutput("cor")%>% withSpinner()))
               ))
   )
 )
