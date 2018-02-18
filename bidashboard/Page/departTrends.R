@@ -36,8 +36,8 @@ output$decompo <- renderggiraph({
                      Trend=decomposed$time.series[,2],
                      Random=decomposed$time.series[,3])
   plotdata <- gather(plotdata, component, value, -Time,-Date)
-  plotdata$component<- factor(plotdata$component,levels=c("Observed","Trend","Seasonal","Random"))
-  plotdata$tooltip <- paste(plotdata$Date,"<br>Average weekly sales :", round(plotdata$value,2))
+  plotdata$component<- factor(plotdata$component,levels=c("Observed","Seasonal","Trend","Random"))
+  plotdata$tooltip <- paste(plotdata$Date,"<br>Average weekly sales :", dollar_format(largest_with_cents = 1e+08)(plotdata$value))
   
   my_gg<- ggplot(plotdata, aes(x=Time, y=value, group = component)) +
     facet_grid(component ~ ., scales="free_y") +

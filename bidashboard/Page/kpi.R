@@ -7,8 +7,18 @@ df$Holidy[df$Date%in%c("2010-12-31","2011-12-30","2012-12-28")] <- "Christmas"
 
 observeEvent(input$show, {
   showModal(modalDialog(
-    title = "Important message",
-    "This is an important message!"
+    title = "About this dashboard",
+    footer=modalButton('Close'),
+    tags$p("This business intelligence dashboard demo is built using the Shiny framework in R with anonymized 
+           historical sales data for 45 Walmart stores, each composed of a different number of departments. The whole data set can be found on",
+           tags$a("Kaggle.",href="https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting")),
+    tags$p("The ",tags$b("Key performance indicators"), 
+           "part of the dashboard presents some key figures and simple charts that give an overview of the business. This part of the dashboard is meant to give users a quick glimpse of the data without going into to much details."),
+    tags$p("Users of the dashboard can really delve into the data in the ",tags$b("Store insights"),
+            "part where they can choose a specific store of interest and study the breakdown of the sales into different departments as well as the weekly sales trends of each of them."),
+    tags$p("Besides store specific facts, departmental trends that hold true across stores are also valuable informations for business users. In the ",
+           tags$b("Department trends")," part, a time series decomposition of the average department sales is presented. This allows users to clearly distinguish between the parts of the sales attributable to seasonal fluctuations and those that represent the underlying trend. 
+           In this part, the relation between the sales of different departments is also presented in a correlation heatmap.")
   ))
 })
 
@@ -55,7 +65,7 @@ output$weeklysalesplot<-renderHighchart({
     hc <- highchart() %>%
       hc_chart(type = "bar") %>%
       hc_xAxis(categories = plotdata$Store)%>%
-      hc_add_series(data = round(plotdata$Avg_Sales), color = "#2f7ed8",
+      hc_add_series(data = round(plotdata$Avg_Sales,2), color = "#2f7ed8",
                     name = "Average weekly sales",showInLegend = FALSE)
     hc
   })
@@ -64,7 +74,7 @@ output$weeklysalesplot<-renderHighchart({
     hc <- highchart() %>%
       hc_chart(type = "bar") %>%
       hc_xAxis(categories = plotdata$Store)%>%
-      hc_add_series(data = round(plotdata$Avg_Sales), color = "#2f7ed8",
+      hc_add_series(data = round(plotdata$Avg_Sales,2), color = "#2f7ed8",
                     name = "Average weekly sales",showInLegend = FALSE)
     hc
   })
