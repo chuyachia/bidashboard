@@ -44,10 +44,10 @@ y2yGrowth <- function(df,prevyear,thisyear){
 
 storeAvg <- function(mydb){
   rtn <- dbGetQuery(mydb,
-             'SELECT A.Store AS Store, Type,avg(Weekly_Sales) AS Avg_Sales 
-             FROM (SELECT Store, Date, sum(Weekly_Sales) AS Weekly_Sales
+             'SELECT A.Store AS Store, Type,sum(Avg_Sales) AS Avg_Sales 
+             FROM (SELECT Store, Dept, avg(Weekly_Sales) AS Avg_Sales
                     FROM train
-                    GROUP BY Store, Date) AS A
+                    GROUP BY Store, Dept) AS A
             JOIN stores
              USING (Store)
              GROUP BY A.Store 
@@ -72,7 +72,7 @@ storeInfo <- function(mydb,storenum) {
 }
 storeSalesByDept <- function(mydb,storenum) {
   rtn <- dbGetQuery(mydb,
-                    paste('SELECT Dept, sum(Weekly_Sales) AS Total_Sales
+                    paste('SELECT Dept, avg(Weekly_Sales) AS Avg_Sales
                            FROM train
                            WHERE Store==',storenum,
                            ' GROUP BY Dept'

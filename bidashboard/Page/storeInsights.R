@@ -41,22 +41,23 @@ output$desc <- renderText({
 
 output$salesdept <- renderHighchart({
   plotdata <- storeSalesByDept(mydb,chosenstore())
-  plotdata$Total_Sales[plotdata$Total_Sales<0] <-0
+  plotdata$Avg_Sales[plotdata$Avg_Sales<0] <-0
   plotdata <- plotdata%>% filter(Dept%in%isolate(input$selectdepartments))
-  alldepartsales <- sum(plotdata$Total_Sales)
+  alldepartsales <- sum(plotdata$Avg_Sales)
   if (nrow(plotdata)==0){
     hc <- highchart()
     hc
   } else {
     tm <- treemap(plotdata, index = c("Dept"),
-                  vSize = "Total_Sales",palette= "#8bbc21",
+                  vSize = "Avg_Sales",palette= "#8bbc21",
                   type = "comp",draw = FALSE)
     hc <- hctreemap(tm, allowDrillToNode = TRUE, layoutAlgorithm = "squarified")%>%
-      hc_title(text = paste("Storewide total sales 2010-2012: ","<b>$",format(alldepartsales,digits=12,decimal.mark=".",big.mark=","),"</b>"))%>%
+      hc_title(text = paste("Storewide average weekly sales: ","<b>$",format(alldepartsales,digits=9,decimal.mark=".",big.mark=","),"</b>"))%>%
       hc_tooltip(formatter = JS("function(){
+                                var val = parseFloat(this.point.value).toFixed(2);
                                 var pct =parseFloat((this.point.value/this.point.series.tree.val)*100).toFixed(2);
                                 return ('<b>Department '+this.point.name+'</b><br>'+
-                                'Department sales: $' + this.point.value+'<br>'+
+                                'Department sales: $' + val+'<br>'+
                                 'Percentage in storewide sales: '+pct+'%')
                                 }"))
     hc
