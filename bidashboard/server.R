@@ -1,7 +1,3 @@
-library(shiny)
-library(shinydashboard)
-library(highcharter)
-library(treemap)
 source('loadData.R',local = TRUE)
 
 server <- function(input, output,session) {

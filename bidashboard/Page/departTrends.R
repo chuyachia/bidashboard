@@ -13,10 +13,10 @@ output$ui2 <- renderUI({
   if (is.null(month_avg_sales))
     return()
   selectInput("choosedepartts",
-              "Choose a department",
-              (function(){ls = unique(month_avg_sales$Dept) 
-              names(ls) =paste('Dept',unique(month_avg_sales$Dept)) 
-              return(ls)})())
+          "Choose a department",
+          (function(){ls = unique(month_avg_sales$Dept) 
+          names(ls) =paste('Dept',unique(month_avg_sales$Dept)) 
+          return(ls)})())
 })
 
 output$decompo <- renderggiraph({
@@ -46,7 +46,8 @@ output$decompo <- renderggiraph({
     theme_bw() +
     scale_x_date(labels = date_format("%Y-%m"),date_breaks="1 month")+
     labs(y="",x="") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+    theme(text=element_text(family="sans"),
+          axis.text.x = element_text(angle = 45, hjust = 1),
           panel.grid.minor.y = element_blank(),
           panel.grid.major.x = element_blank(),
           panel.grid.minor.x = element_blank())

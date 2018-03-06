@@ -2,6 +2,7 @@ library(shinydashboard)
 library(shinycssloaders)
 library(highcharter)
 library(ggiraph)
+library(treemap)
 
 ui = dashboardPage(
   dashboardHeader(title="Retail BI dashboard",
@@ -24,6 +25,9 @@ ui = dashboardPage(
     )
   ),
   dashboardBody(
+    tags$head(
+      tags$style(type="text/css", "text {font-family: sans-serif}")
+    ),
     tabItems(
       tabItem(tabName="overview",
               fluidRow(
@@ -31,6 +35,13 @@ ui = dashboardPage(
                 valueBoxOutput('avgweeklysales'),
                 valueBoxOutput('yearlygrowth'),
                 valueBoxOutput('holidayaug')
+                ),
+                column(12,
+                       box(width=12,
+                           title = "Average weekly sales by month",
+                           solidHeader = TRUE,
+                           status = "primary",
+                           highchartOutput("weeklysalesplot")%>% withSpinner())
                 ),
                 column(12,
                  tabBox(width=6,
@@ -53,19 +64,18 @@ ui = dashboardPage(
                         tabPanel("Christmas", 
                                  highchartOutput("xmsales")%>% withSpinner())
                  )
-                ),
-                column(12,
-                 box(width=12,title = "Average weekly sales by month", status = "primary",
-                     highchartOutput("weeklysalesplot")%>% withSpinner())
-                 )
+                )
               )),
       tabItem(tabName="storeinsights",
               fluidRow(
                 column(12,
-                box(width=12,htmlOutput("desc"),status = "primary")
+                box(width=12,
+                    htmlOutput("desc"),
+                    status = "primary")
                 ),
                 column(12,
-                box(width=3,status = "primary",
+                box(width=3,
+                    status = "primary",
                     selectInput("choosestore",
                               "Choose a store",
                               (function(){ls = as.character(seq(1:45)) 
@@ -74,23 +84,34 @@ ui = dashboardPage(
                     actionLink("selectall","Select/Unselect all departments"), 
                     uiOutput("ui"),
                     actionButton("update", "Update view")),
-                box(width=9,title = "Sales breakdown by department",status = "primary",
+                box(width=9,
+                    title = "Sales breakdown by department",
+                    status = "primary",
+                    solidHeader = TRUE,
                     highchartOutput("salesdept")%>% withSpinner())
                 ),
                 column(12,
-                box(width=12,title="Weekly sales trends by department",status = "primary",
+                box(width=12,
+                    title="Weekly sales trends by department",
+                    status = "primary",
+                    solidHeader = TRUE,
                     highchartOutput("trenddept")%>% withSpinner())
                 )
                 )
               ),
       tabItem(tabName="departtrends",
               fluidRow(
-                column(12,box(width=12,title="Average weekly sales time series decomposition",
+                column(12,box(width=12,
+                              title="Average weekly sales time series decomposition",
                               status="primary",
-                              uiOutput("ui2"),
-                              ggiraphOutput("decompo")%>% withSpinner())),
+                              solidHeader = TRUE,
+                              fluidRow(
+                                column(2,uiOutput("ui2")),
+                                column(10,ggiraphOutput("decompo")%>% withSpinner()))
+                              )),
                 column(12,box(width=12,title="Department sales correlations",
                               status="primary",
+                              solidHeader = TRUE,
                     highchartOutput("cor")%>% withSpinner()))
               ))
   )

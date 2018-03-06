@@ -11,7 +11,7 @@ observeEvent(input$show, {
     footer=modalButton('Close'),
     tags$p("This business intelligence dashboard demo is built using the Shiny framework in R with anonymized 
            historical sales data for 45 Walmart stores, each composed of a different number of departments. The whole data set can be found on",
-           tags$a("Kaggle.",href="https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting")),
+           tags$a("Kaggle.",target="_blank",href="https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting")),
     tags$p("The ",tags$b("Key performance indicators"), 
            "part of the dashboard presents some key figures and simple charts that give an overview of the business. This part of the dashboard is meant to give users a quick glimpse of the data without going into to much details."),
     tags$p("Users of the dashboard can really delve into the data in the ",tags$b("Store insights"),
